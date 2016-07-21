@@ -1,4 +1,7 @@
 # Dilite
+
+[![Build Status](https://travis-ci.org/chetanism/dilite.png)](https://travis-ci.org/chetanism/dilite)
+
 An extremely light weight DI container. The goal is to keep `Dilite` light enough that it seems logical to have multiple instances of `Dilite` wired up together in a single application.
 
 ## Installation
@@ -200,3 +203,6 @@ expect(dilite.get('d')).to.be.equal(10);
 Copyright © 2015-2016 Chetan Verma, LLC. This source code is licensed under the MIT license found in
 the [LICENSE.txt](https://github.com/chetanism/dilite/blob/master/LICENSE.txt) file.
 license.
+
+---
+Built with [babel starter kit](https://github.com/kriasoft/babel-starter-kit)
