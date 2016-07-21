@@ -39,7 +39,7 @@ Specifies a function that is invoked only once to prepare and return a service w
 dilite.factory('my_fancy_service', c => 
     new MyFancyService(
         c('a_number'),
-        c('a_function)
+        c('a_function')
     );  
 );
 
