@@ -1,13 +1,13 @@
 {
   "private": true,
-  "name": "babel-starter-kit",
+  "name": "dilite",
   "version": "0.0.0",
-  "description": "A project template for authoring and publishing JavaScript libraries",
-  "homepage": "https://www.kriasoft.com/babel-starter-kit/",
-  "repository": "kriasoft/babel-starter-kit",
-  "author": "Kriasoft <hello@kriasoft.com> (https://www.kriasoft.com)",
+  "description": "An extremely light weight DI container",
+  "homepage": "https://www.github.com/chetanism/dilite",
+  "repository": "chetanism/dilite",
+  "author": "Chetan Verma <verma.chetan@gmail.com>",
   "contributors": [
-    "Konstantin Tarkus <hello@tarkus.me>"
+    "Chetan Verma <verma.chetan@gmail.com>"
   ],
   "license": "MIT",
   "keywords": [],
@@ -53,7 +53,8 @@
     "mocha": "^2.4.5",
     "rollup": "^0.26.2",
     "rollup-plugin-babel": "^2.4.0",
-    "sinon": "^2.0.0-pre"
+    "sinon": "^2.0.0-pre",
+    "sinon-chai": "https://github.com/sjmulder/sinon-chai.git#pr/sinon-2.0.0-pre"
   },
   "scripts": {
     "lint": "eslint src test tools",
@@ -62,8 +63,6 @@
     "test:cover": "babel-node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "build": "node tools/build",
-    "prepublish": "npm run build",
-    "publish:docs": "easystatic deploy docs --repo kriasoft/babel-starter-kit",
-    "start": "easystatic start docs"
+    "prepublish": "npm run build"
   }
 }
