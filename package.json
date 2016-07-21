@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "dilite",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An extremely light weight DI container",
   "homepage": "https://www.github.com/chetanism/dilite",
   "repository": "chetanism/dilite",
