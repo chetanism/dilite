@@ -167,4 +167,61 @@ describe('Dilite', function () {
     // foo in returned factory gets called
     expect(dilite.get('d')).to.be.equal(10);
   });
+
+  it('calls onCreate', function () {
+    const d1 = new Dilite;
+    d1.service('num1', 2);
+    d1.service('num2', 10);
+
+    d1.onCreate('num1', num1 => num1 * 2);
+    d1.onCreate('num1', num1 => num1 + 2);
+
+    const d2 = new Dilite;
+    d2.onCreate('num1', num1 => num1 * 3);
+    d2.onCreate('num1', num1 => num1 + 3);
+    d1.add(d2);
+
+    const d3 = new Dilite;
+    d3.onCreate('num1', num1 => num1 * 4);
+    d3.onCreate('num1', (num1, c) => num1 + c('num2'));
+    d1.add(d3);
+
+    const num1 = d1.get('num1');
+    const num1_2 = d2.get('num1');
+
+    expect(num1).to.be.equal(94);
+    expect(num1_2).to.be.equal(94);
+  });
+
+  it('can handle cyclic dependency', function () {
+    const d1 = new Dilite;
+    d1.service('a', { name: 'a' });
+    d1.factory('b', () => ({ name: 'b' }));
+    d1.service('d', { name: 'd' });
+
+    d1.onCreate('a', (a, c) => {
+      a.b = c('b')
+    });
+
+    d1.onCreate('b', (b, c) => {
+      b.d = c('d')
+    });
+
+    d1.onCreate('d', (d, c) => {
+      d.a = c('a')
+    });
+
+    const a = d1.get('a');
+    const b = d1.get('b');
+    const d = d1.get('d');
+
+    expect(a.name).to.be.equal('a');
+    expect(b.name).to.be.equal('b');
+    expect(d.name).to.be.equal('d');
+
+    expect(a.b).to.be.equal(b);
+    expect(b.d).to.be.equal(d);
+    expect(d.a).to.be.equal(a);
+  });
+
 });
