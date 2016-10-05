@@ -15,7 +15,8 @@ class Dilite {
   provider = (name, provider) => this.factory(name, provider());
 
   onCreate = (name, func) => {
-    this.onCreateCallbacks.get(name) ? this.onCreateCallbacks.get(name).push(func) : this.onCreateCallbacks.set(name, [func]);
+    this.onCreateCallbacks.get(name) ? this.onCreateCallbacks.get(name).push(func) :
+      this.onCreateCallbacks.set(name, [func]);
   };
 
   add = (dilite) => this.dilites.push(dilite) && (dilite.get = (name) => this.get(name));
