@@ -14,12 +14,11 @@ class Dilite {
 
   provider = (name, provider) => this.factory(name, provider());
 
-  onCreate = (name, func) => this.onCreateCallbacks.get(name) ?
-    this.onCreateCallbacks.get(name).push(func) :
-    this.onCreateCallbacks.set(name, [func]);
+  onCreate = (name, func) => {
+    this.onCreateCallbacks.get(name) ? this.onCreateCallbacks.get(name).push(func) : this.onCreateCallbacks.set(name, [func]);
+  };
 
-  add = (dilite) =>
-  this.dilites.push(dilite) && (dilite.get = (name) => this.get(name));
+  add = (dilite) => this.dilites.push(dilite) && (dilite.get = (name) => this.get(name));
 
   get = (name) => {
     let content = this.services.get(name);
@@ -43,7 +42,7 @@ class Dilite {
 
   findOnCreates = (name) => [
     ...(this.onCreateCallbacks.get(name) || []),
-    ...this.dilites.reduce((onCreates, d) => [...onCreates, ...d.findOnCreates(name)], [])
+    ...this.dilites.reduce((onCreates, d) => [...onCreates, ...d.findOnCreates(name)], []),
   ];
 }
 

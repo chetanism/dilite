@@ -187,10 +187,10 @@ describe('Dilite', function () {
     d1.add(d3);
 
     const num1 = d1.get('num1');
-    const num1_2 = d2.get('num1');
+    const num1Copy = d2.get('num1');
 
     expect(num1).to.be.equal(94);
-    expect(num1_2).to.be.equal(94);
+    expect(num1Copy).to.be.equal(94);
   });
 
   it('can handle cyclic dependency', function () {
@@ -199,17 +199,19 @@ describe('Dilite', function () {
     d1.factory('b', () => ({ name: 'b' }));
     d1.service('d', { name: 'd' });
 
+    /* eslint-disable no-param-reassign */
     d1.onCreate('a', (a, c) => {
-      a.b = c('b')
+      a.b = c('b');
     });
 
     d1.onCreate('b', (b, c) => {
-      b.d = c('d')
+      b.d = c('d');
     });
 
     d1.onCreate('d', (d, c) => {
-      d.a = c('a')
+      d.a = c('a');
     });
+    /* eslint-enable no-param-reassign */
 
     const a = d1.get('a');
     const b = d1.get('b');
