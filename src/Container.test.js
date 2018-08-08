@@ -35,7 +35,12 @@ describe('Container', () => {
         a: {
           children: {
             b: { value: 4 },
-            c: { ctor: ctor, inject: ['y'] }
+            c: { ctor: ctor, inject: ['y'] },
+            d: {
+              children: {
+                e: { value: 32 }
+              }
+            }
           }
         }
       }
@@ -53,6 +58,9 @@ describe('Container', () => {
       expect(container.items.a.c.sqx).toBe(144)
 
       expect(container.get('a.c').sqx).toBe(144)
+
+      expect(container.items.a.d.e).toBe(32)
+      expect(container.get('a.d.e')).toBe(32)
     })
   })
 })
