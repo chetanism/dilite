@@ -1,36 +1,69 @@
-/* eslint-disable no-param-reassign, no-unused-expressions */
+const DiliteCore = require('./DiliteCore')
+const DiliteError = require('./DiliteError')
+const createPublicClass = require('public-class').createPublicClass
+
 class Dilite {
-  factories = new Map;
-  services = new Map;
-  dilites = [];
+  constructor() {
+    this.cache = {}
+    this.notShared = {}
+    this.core = new DiliteCore()
+  }
 
-  factory = (name, factory) => {
-    if (this.factories.has(name)) throw new Error(`${name} is already registered.`);
-    return this.factories.set(name, factory) && this;
-  };
-
-  service = (name, content) => this.factory(name, () => content);
-
-  provider = (name, provider) => this.factory(name, provider());
-
-  add = (dilite) =>
-    this.dilites.push(dilite) && (dilite.get = (name) => this.get(name));
-
-  get = (name) => {
-    let content = this.services.get(name);
-
-    if (!content) {
-      const dilite = this.find(name);
-      content = dilite && dilite.factories.get(name)(this.get, this);
-      content && this.services.set(name, content);
+  get(name) {
+    if (Reflect.has(this.cache, name)) {
+      return this.cache[name]
     }
 
-    return content;
-  };
+    const value = this.getValue(name)
+    if (!Reflect.has(this.notShared, name)) {
+      this.cache[name] = value
+    }
 
-  find = (name) => ((this.factories.has(name)) ? this : this.dilites.reduce(
-    (found, d) => found || d.find(name), null)
-  );
+    return value
+  }
+
+  set(name, descriptor) {
+    if (Reflect.has(descriptor, 'value')) {
+      this.setValue(name, descriptor)
+    } else if (Reflect.has(descriptor, 'factory')) {
+      this.setFactory(name, descriptor)
+    } else if (descriptor.ctor !== undefined) {
+      this.setCtor(name, descriptor)
+    }
+
+    if (Reflect.get(descriptor, 'shared') === false) {
+      this.notShared[name] = true
+    }
+  }
+
+  getValue(name) {
+    if (this.core.hasValue(name)) return this.core.getValue(name)
+    if (this.core.hasFactory(name)) {
+      return this.core.createFromFactory(name)
+    }
+
+    throw new DiliteError(`Invalid request: ${name}`)
+  }
+
+  setValue(name, descriptor) {
+    this.core.setValue(name, descriptor.value)
+  }
+
+  setFactory(name, descriptor) {
+    this.core.setFactory(name, () => {
+      const inject = descriptor.inject || []
+      const dependencies = inject.map(i => this.get(i))
+      return descriptor.factory(...dependencies)
+    })
+  }
+
+  setCtor(name, descriptor) {
+    return this.core.setFactory(name, () => {
+      const inject = descriptor.inject || []
+      const dependencies = inject.map(i => this.get(i))
+      return new descriptor.ctor(...dependencies)
+    })
+  }
 }
 
-export default Dilite;
+module.exports = createPublicClass(Dilite, ['get', 'set'])
