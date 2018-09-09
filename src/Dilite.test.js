@@ -20,12 +20,12 @@ describe('Dilite', () => {
       expect(dilite.get).toBeInstanceOf(Function)
       expect(dilite.set).toBeInstanceOf(Function)
 
-      expect(dilite.core).not.toBeDefined()
-      expect(dilite.cache).not.toBeDefined()
-      expect(dilite.getValue).not.toBeDefined()
-      expect(dilite.setValue).not.toBeDefined()
-      expect(dilite.setFactory).not.toBeDefined()
-      expect(dilite.setCtor).not.toBeDefined()
+      expect(dilite.core).toBeDefined()
+      expect(dilite.cache).toBeDefined()
+      expect(dilite.getValue).toBeDefined()
+      expect(dilite.setValue).toBeDefined()
+      expect(dilite.setFactory).toBeDefined()
+      expect(dilite.setCtor).toBeDefined()
     })
   })
 
@@ -49,6 +49,13 @@ describe('Dilite', () => {
       const notShared2 = dilite.get('notShared')
 
       expect(notShared1).not.toBe(notShared2)
+    })
+  })
+
+  describe('#get(\'container\')', () => {
+    it('returns itself', () => {
+      const self = dilite.get('container')
+      expect(self).toBe(dilite)
     })
   })
 

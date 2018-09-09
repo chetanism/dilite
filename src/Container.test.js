@@ -19,7 +19,7 @@ describe('Container', () => {
 
     it('Exposes only items', () => {
       expect(container.items).toBeDefined()
-      expect(container.addServiceTree).not.toBeDefined()
+      expect(container.addServiceTree).toBeDefined()
     })
   })
 

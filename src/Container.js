@@ -1,5 +1,5 @@
 const Dilite = require('./Dilite')
-const createPublicClass = require('public-class').createPublicClass
+// const createPublicClass = require('public-class').createPublicClass
 
 class Container {
   constructor(services) {
@@ -54,4 +54,5 @@ class Container {
 const getFullName = (rootName, name) =>
   rootName === null ? name : `${rootName}.${name}`
 
-module.exports = createPublicClass(Container, ['loadServices', 'items', 'get'])
+module.exports = Container
+// module.exports = createPublicClass(Container, ['loadServices', 'items', 'get'])

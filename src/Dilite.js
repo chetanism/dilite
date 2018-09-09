@@ -1,12 +1,13 @@
 const DiliteCore = require('./DiliteCore')
 const DiliteError = require('./DiliteError')
-const createPublicClass = require('public-class').createPublicClass
+// const createPublicClass = require('public-class').createPublicClass
 
 class Dilite {
   constructor() {
     this.cache = {}
     this.notShared = {}
     this.core = new DiliteCore()
+    this.set('container', { value: this })
   }
 
   get(name) {
@@ -66,4 +67,5 @@ class Dilite {
   }
 }
 
-module.exports = createPublicClass(Dilite, ['get', 'set'])
+module.exports = Dilite
+// module.exports = createPublicClass(Dilite, ['get', 'set'])
