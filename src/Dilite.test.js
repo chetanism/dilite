@@ -52,7 +52,7 @@ describe('Dilite', () => {
     })
   })
 
-  describe('#get(\'container\')', () => {
+  describe("#get('container')", () => {
     it('returns itself', () => {
       const self = dilite.get('container')
       expect(self).toBe(dilite)
