@@ -1,6 +1,6 @@
 {
   "name": "dilite",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A light weight DI container",
   "homepage": "https://www.github.com/chetanism/dilite",
   "repository": "chetanism/dilite",
