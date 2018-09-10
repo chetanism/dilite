@@ -1,96 +1,78 @@
 const Dilite = require('./Dilite')
 
-describe('Dilite', () => {
-  let dilite
-  beforeEach(() => {
-    dilite = new Dilite()
-  })
+const { Container, ctor, factory, value } = Dilite
 
-  afterEach(() => {
-    dilite = null
-  })
+describe('Dlite', () => {
+  describe('ctor', () => {})
 
-  describe('Class', () => {
-    it('Exists', function() {
-      expect(Dilite).toBeInstanceOf(Function)
-      expect(dilite).toBeInstanceOf(Dilite)
-    })
+  describe('factory', () => {})
 
-    it('only exposes get, set methods', () => {
-      expect(dilite.get).toBeInstanceOf(Function)
-      expect(dilite.set).toBeInstanceOf(Function)
+  describe('value', () => {})
 
-      expect(dilite.core).toBeDefined()
-      expect(dilite.cache).toBeDefined()
-      expect(dilite.getValue).toBeDefined()
-      expect(dilite.setValue).toBeDefined()
-      expect(dilite.setFactory).toBeDefined()
-      expect(dilite.setCtor).toBeDefined()
-    })
-  })
-
-  describe('Shared flag', () => {
-    it('handles shared flag correctly', () => {
-      dilite.set('shared', {
-        factory: () => new Object()
-      })
-
-      dilite.set('notShared', {
-        factory: () => new Object(),
-        shared: false
-      })
-
-      const shared1 = dilite.get('shared')
-      const shared2 = dilite.get('shared')
-
-      expect(shared1).toBe(shared2)
-
-      const notShared1 = dilite.get('notShared')
-      const notShared2 = dilite.get('notShared')
-
-      expect(notShared1).not.toBe(notShared2)
-    })
-  })
-
-  describe("#get('container')", () => {
-    it('returns itself', () => {
-      const self = dilite.get('container')
-      expect(self).toBe(dilite)
-    })
-  })
-
-  describe('random tests', () => {
-    it('Works as expected', () => {
-      const anObject = {}
-      const Sq = function(anObject, number) {
-        this.n = number
-        this.o = anObject
+  describe('Container', () => {
+    it('works as expected', () => {
+      class X {
+        constructor(tt) {
+          this.tt = tt
+        }
+        doSomething(x) {
+          return this.tt(x)
+        }
       }
 
-      dilite.set('number', { value: 10 })
-      dilite.set('square', { value: x => x * x })
+      const container = new Container({
+        num1: value(3),
+        num2: value(10),
 
-      dilite.set('anObject', { factory: () => anObject })
+        fun: {
+          doubler: value(x => x + x),
+          square: value(x => x * x)
+        },
 
-      dilite.set('number_square', {
-        factory: (square, number) => square(number),
-        inject: ['square', 'number']
+        moreFun: {
+          tenTimes: factory(x => y => x * y, ['num2']),
+
+          xx: ctor(X, ['moreFun.tenTimes'])
+        }
       })
 
-      dilite.set('obj', {
-        ctor: Sq,
-        inject: ['anObject', 'number']
+      expect(container.get('num1')).toBe(3)
+      expect(container.get('num2')).toBe(10)
+
+      expect(container.get('fun').doubler(21)).toBe(42)
+      expect(container.get('fun.square')(2)).toBe(4)
+
+      const x = container.get('moreFun.xx')
+      expect(x.doSomething(10)).toBe(100)
+
+      container.loadServices({
+        num3: value(33),
+
+        fun2: {
+          doubler: value(x => x + x),
+          square: value(x => x * x)
+        },
+
+        fun: {
+          nested: {
+            fun: value(34)
+          }
+        }
       })
 
-      expect(dilite.get('number')).toBe(10)
-      expect(dilite.get('square')(20)).toBe(400)
+      expect(container.cache['fun']).toBeUndefined()
+      expect(container.cache['fun.doubler']).toBeDefined()
 
-      expect(dilite.get('anObject')).toBe(anObject)
-      expect(dilite.get('number_square')).toBe(100)
+      expect(container.get('num3')).toBe(33)
+      expect(container.get('fun2').doubler(21)).toBe(42)
+      expect(container.get('fun2.square')(2)).toBe(4)
+      expect(container.get('fun').doubler(21)).toBe(42)
+      expect(container.get('fun.nested').fun).toBe(34)
+      expect(container.get('').num3).toBe(33)
 
-      const o = dilite.get('obj')
-      expect(o.n).toBe(10)
-      expect(o.o).toBe(anObject)
+      expect(() => container.loadServices({ num1: value(1) })).toThrow()
+      expect(() => container.get('alpha')).toThrow()
+      expect(() => container.loadServices({ num1: { p: value('q') } }))
     })
   })
 })
