@@ -25,26 +25,6 @@ function setKeyValue(obj, keyParts, value) {
   setKeyValue(obj[key], keyParts.slice(1), value)
 }
 
-function deepMerge(obj1, obj2) {
-  const obj = {}
-  const allKeys = new Set([...Reflect.ownKeys(obj1), ...Reflect.ownKeys(obj2)])
-
-  for (const key of allKeys) {
-    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-      obj[key] = deepMerge(obj1[key], obj2[key])
-    } else if (
-      typeof obj1[key] !== 'undefined' &&
-      typeof obj2[key] !== 'undefined'
-    ) {
-      throw new Error('Key already exists')
-    } else {
-      obj[key] = obj2[key] || obj1[key]
-    }
-  }
-
-  return obj
-}
-
 function getKeyValue(obj, keyParts) {
   const key = keyParts[0]
 
@@ -69,8 +49,32 @@ class Container {
   }
 
   loadServices(initializers) {
-    this.initializers = deepMerge(this.initializers, initializers)
-    this.cache = {}
+    this.initializers = this.deepMerge(this.initializers, initializers, [])
+    // this.cache = {}
+  }
+
+  deepMerge(obj1, obj2, path) {
+    const obj = {}
+    const allKeys = new Set([
+      ...Reflect.ownKeys(obj1),
+      ...Reflect.ownKeys(obj2)
+    ])
+
+    for (const key of allKeys) {
+      if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+        obj[key] = this.deepMerge(obj1[key], obj2[key], [...path, key])
+        this.cache[[...path, key].join('.')] = undefined
+      } else if (
+        typeof obj1[key] !== 'undefined' &&
+        typeof obj2[key] !== 'undefined'
+      ) {
+        throw new Error('Key already exists')
+      } else {
+        obj[key] = obj2[key] || obj1[key]
+      }
+    }
+
+    return obj
   }
 
   get(key) {

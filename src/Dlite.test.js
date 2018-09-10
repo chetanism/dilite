@@ -60,6 +60,9 @@ describe('Dlite', () => {
         }
       })
 
+      expect(container.cache['fun']).toBeUndefined()
+      expect(container.cache['fun.doubler']).toBeDefined()
+
       expect(container.get('num3')).toBe(33)
       expect(container.get('fun2').doubler(21)).toBe(42)
       expect(container.get('fun2.square')(2)).toBe(4)
