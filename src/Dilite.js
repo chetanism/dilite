@@ -131,7 +131,7 @@ class Container {
 
     if (initializer.type === 'factory') {
       const value = initializer.factory(...deps)
-      if (initializer.singleton === true) {
+      if (initializer.singleton !== false) {
         return setValue(key, value)
       } else {
         return value
