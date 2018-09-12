@@ -1,7 +1,7 @@
 const DiliteError = require('./DiliteError')
 
-function factory(factory, inject) {
-  return { type: 'factory', factory, inject }
+function factory(factory, inject, singleton = true) {
+  return { type: 'factory', factory, inject, singleton }
 }
 
 function value(value) {
@@ -131,7 +131,11 @@ class Container {
 
     if (initializer.type === 'factory') {
       const value = initializer.factory(...deps)
-      return setValue(key, value)
+      if (initializer.singleton === true) {
+        return setValue(key, value)
+      } else {
+        return value
+      }
     }
   }
 }
